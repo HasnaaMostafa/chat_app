@@ -1,4 +1,3 @@
-import 'package:chat_app/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -15,6 +14,8 @@ class RegisterScreen extends StatelessWidget {
   String? userName;
   String? phone;
 
+  bool? isPassword;
+
   bool isLoading = false;
   var formKey = GlobalKey<FormState>();
   @override
@@ -26,10 +27,8 @@ class RegisterScreen extends StatelessWidget {
         } else if (state is RegisterSuccessState) {
           BlocProvider.of<ChatCubit>(context).getUsers();
 
-          Navigator.pushNamed(
-            context,
-            LoginScreen.id,
-          );
+          Navigator.pop(context);
+
           isLoading = false;
         } else if (state is RegisterErrorState) {
           ScaffoldMessenger.of(context)
@@ -124,9 +123,22 @@ class RegisterScreen extends StatelessWidget {
                                                 top: 10,
                                                 bottom: 10),
                                             child: TextFormField(
+                                              onFieldSubmitted: (vlaue) {
+                                                if (formKey.currentState!
+                                                    .validate()) {
+                                                  BlocProvider.of<AuthCubit>(
+                                                          context)
+                                                      .registerUser(
+                                                          email: email!,
+                                                          password: password!,
+                                                          phone: phone!,
+                                                          userName: userName!);
+                                                }
+                                              },
+                                              keyboardType: TextInputType.text,
                                               validator: (value) {
                                                 if (value!.isEmpty) {
-                                                  return "User Name must not be empty";
+                                                  return "      User Name must not be empty";
                                                 }
                                                 return null;
                                               },
@@ -155,9 +167,23 @@ class RegisterScreen extends StatelessWidget {
                                                         color: Colors
                                                             .grey.shade300))),
                                             child: TextFormField(
+                                              onFieldSubmitted: (value) {
+                                                if (formKey.currentState!
+                                                    .validate()) {
+                                                  BlocProvider.of<AuthCubit>(
+                                                          context)
+                                                      .registerUser(
+                                                          email: email!,
+                                                          password: password!,
+                                                          phone: phone!,
+                                                          userName: userName!);
+                                                }
+                                              },
+                                              keyboardType:
+                                                  TextInputType.emailAddress,
                                               validator: (value) {
                                                 if (value!.isEmpty) {
-                                                  return "email must not be empty";
+                                                  return "      email must not be empty";
                                                 }
                                                 return null;
                                               },
@@ -186,9 +212,22 @@ class RegisterScreen extends StatelessWidget {
                                                         color: Colors
                                                             .grey.shade300))),
                                             child: TextFormField(
+                                              onFieldSubmitted: (value) {
+                                                if (formKey.currentState!
+                                                    .validate()) {
+                                                  BlocProvider.of<AuthCubit>(
+                                                          context)
+                                                      .registerUser(
+                                                          email: email!,
+                                                          password: password!,
+                                                          phone: phone!,
+                                                          userName: userName!);
+                                                }
+                                              },
+                                              keyboardType: TextInputType.phone,
                                               validator: (value) {
                                                 if (value!.isEmpty) {
-                                                  return "phone must not be empty";
+                                                  return "      phone must not be empty";
                                                 }
                                                 return null;
                                               },
@@ -212,23 +251,58 @@ class RegisterScreen extends StatelessWidget {
                                                 top: 10,
                                                 bottom: 10),
                                             child: TextFormField(
-                                              obscureText: true,
+                                              onFieldSubmitted: (value) {
+                                                if (formKey.currentState!
+                                                    .validate()) {
+                                                  BlocProvider.of<AuthCubit>(
+                                                          context)
+                                                      .registerUser(
+                                                          email: email!,
+                                                          password: password!,
+                                                          phone: phone!,
+                                                          userName: userName!);
+                                                }
+                                              },
+                                              keyboardType:
+                                                  TextInputType.visiblePassword,
+                                              obscureText: state
+                                                      is ChangePasswordVisibilityStates
+                                                  ? isPassword = BlocProvider
+                                                          .of<AuthCubit>(
+                                                              context)
+                                                      .isPassword
+                                                  : isPassword = BlocProvider
+                                                          .of<AuthCubit>(
+                                                              context)
+                                                      .isPassword,
                                               validator: (value) {
                                                 if (value!.isEmpty) {
-                                                  return "Password must not be empty";
+                                                  return "      Password must not be empty";
                                                 }
                                                 return null;
                                               },
                                               onChanged: (String? data) {
                                                 password = data;
                                               },
-                                              decoration: const InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintText: "Password",
-                                                  hintStyle: TextStyle(
+                                                  hintStyle: const TextStyle(
                                                     color: Colors.grey,
                                                   ),
                                                   border: InputBorder.none,
-                                                  prefixIcon: Icon(Icons.lock)),
+                                                  prefixIcon:
+                                                      const Icon(Icons.lock),
+                                                  suffixIcon: IconButton(
+                                                      onPressed: () {
+                                                        BlocProvider.of<
+                                                                    AuthCubit>(
+                                                                context)
+                                                            .changePasswordVisibility();
+                                                      },
+                                                      icon: Icon(BlocProvider
+                                                              .of<AuthCubit>(
+                                                                  context)
+                                                          .suffix))),
                                             ),
                                           ),
                                         ],

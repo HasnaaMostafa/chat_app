@@ -26,6 +26,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             emit(LoginErrorState(error: "something went wrong"));
             print(error.toString());
           }
+          emit(LoginErrorState(error: "invalid email!"));
         });
       }
     });

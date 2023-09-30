@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../models/user_model.dart';
@@ -25,13 +26,14 @@ class AuthCubit extends Cubit<AuthState> {
         }
       } else {
         emit(LoginErrorState(error: "something went wrong"));
-        print(error.toString());
       }
+
+      emit(LoginErrorState(error: "invalid email!"));
     });
   }
 
   void logoutUser() async {
-    emit(LoginLoadingState());
+    emit(LogoutLoadingState());
     await FirebaseAuth.instance.signOut().then((value) {
       emit(LogoutSuccessState());
     }).catchError((error) {
@@ -67,7 +69,7 @@ class AuthCubit extends Cubit<AuthState> {
           emit(RegisterErrorState(error: "email-already-in-use"));
         }
       } else {
-        emit(RegisterErrorState(error: "something went wrong"));
+        emit(RegisterErrorState(error: "invalid email!"));
         print(error.toString());
       }
     });
@@ -96,5 +98,15 @@ class AuthCubit extends Cubit<AuthState> {
     }).catchError((error) {
       emit(UserCreatedErrorStates(error.toString()));
     });
+  }
+
+  IconData suffix = Icons.visibility_off_outlined;
+  bool isPassword = true;
+
+  void changePasswordVisibility() {
+    isPassword = !isPassword;
+    suffix =
+        isPassword ? Icons.visibility_off_outlined : Icons.visibility_outlined;
+    emit(ChangePasswordVisibilityStates());
   }
 }
